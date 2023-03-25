@@ -11,13 +11,13 @@ import se.michaelthelin.spotify.SpotifyHttpManager;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials;
 import se.michaelthelin.spotify.model_objects.special.SearchResult;
-import se.michaelthelin.spotify.model_objects.specification.Artist;
-import se.michaelthelin.spotify.model_objects.specification.Paging;
+import se.michaelthelin.spotify.model_objects.specification.*;
 import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeRequest;
 import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeUriRequest;
 import se.michaelthelin.spotify.requests.data.personalization.simplified.GetUsersTopArtistsRequest;
 import se.michaelthelin.spotify.requests.data.search.SearchItemRequest;
 import se.michaelthelin.spotify.requests.data.search.simplified.SearchArtistsRequest;
+import se.michaelthelin.spotify.requests.data.search.simplified.SearchPlaylistsRequest;
 
 import java.io.IOException;
 import java.net.URI;
@@ -25,6 +25,7 @@ import java.net.http.HttpResponse;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -78,7 +79,9 @@ public class AuthController {
                 .build();
         try {
             final Paging<Artist> artistPaging = getUsersTopArtistsRequest.execute();
-            System.out.println("Primeiro resultado: " + Arrays.stream(artistPaging.getItems()).findFirst());
+            Artist[] topArtists = artistPaging.getItems();
+            for (Artist artist : topArtists)
+                System.out.println(artist);
         } catch (Exception e) {
             System.out.println("We're sorry, something went wrong :(\n" + e.getMessage());
         }
@@ -87,12 +90,34 @@ public class AuthController {
     @GetMapping(value="search/")
     public void searchArtist(@RequestParam("q") String q) {
         final SearchArtistsRequest searchArtistsRequest = spotifyApi.searchArtists(q)
-                .limit(10)
+                .limit(5)
                 .offset(0)
                 .build();
         try {
             final Paging<Artist> artistPaging = searchArtistsRequest.execute();
-            System.out.println("Primeiro resultado: " + Arrays.stream(artistPaging.getItems()).findFirst());
+            Artist[] artistsQuery = artistPaging.getItems();
+            for (Artist artist : artistsQuery)
+                System.out.println(artist);
+        } catch (IOException | SpotifyWebApiException |org.apache.hc.core5.http.ParseException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    @GetMapping(value="descobertas-da-semana")
+    public void descobertasDaSemana() {
+        final SearchPlaylistsRequest searchPlaylistsRequest = spotifyApi.searchPlaylists("Discover Weekly")
+                .limit(1)
+                .offset(0)
+                .build();
+        try {
+            final Paging<PlaylistSimplified> playlistSimplifiedPaging = searchPlaylistsRequest.execute();
+            PlaylistSimplified[] playlists = playlistSimplifiedPaging.getItems();
+            Optional<PlaylistSimplified> result = Arrays.stream(playlists).findFirst();
+            PlaylistSimplified descobertasDaSemana = result.orElse(null);
+            final Paging<PlaylistTrack> playlistsItems = spotifyApi.getPlaylistsItems(descobertasDaSemana.getId()).build().execute();
+            PlaylistTrack[] playlistTracks = playlistsItems.getItems();
+            for (PlaylistTrack track : playlistTracks)
+                System.out.println(track.getTrack().getName() + " - " + track.getTrack().getHref());
         } catch (IOException | SpotifyWebApiException |org.apache.hc.core5.http.ParseException e) {
             System.out.println("Error: " + e.getMessage());
         }
