@@ -1,6 +1,7 @@
 package ada.spotify.backend.model.track;
 
 import ada.spotify.backend.model.playlist.Playlist;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,8 +25,11 @@ public class Music {
     private String id;
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name="playlist_id")
-    private Playlist playlist;
+    @JsonBackReference
+    @ManyToMany
+        @JoinTable(name = "MUSIC_PLAYLIST",
+            joinColumns = @JoinColumn(name = "music_id"),
+            inverseJoinColumns = @JoinColumn(name = "playlist_id"))
+    private List<Playlist> playlist;
 
 }

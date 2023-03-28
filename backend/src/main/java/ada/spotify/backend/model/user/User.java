@@ -1,7 +1,10 @@
 package ada.spotify.backend.model.user;
 
+import ada.spotify.backend.model.playlist.Playlist;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "tb_user")
@@ -18,6 +21,8 @@ public class User {
     private String username;
     private String email;
     private String password;
+    @OneToMany
+    private List<Playlist> playlists;
 
     public User(String username, String email, String password) {
         this.username = username;
