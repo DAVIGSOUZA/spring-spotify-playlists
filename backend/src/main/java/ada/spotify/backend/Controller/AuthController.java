@@ -67,7 +67,7 @@ public class AuthController {
         } catch (IOException | SpotifyWebApiException | org.apache.hc.core5.http.ParseException e) {
             System.out.println("Error: " + e.getMessage());
         }
-        response.sendRedirect("http://localhost:8080/api/user-top-artists");
+        response.sendRedirect("http://localhost:8080/welcome");
         return spotifyApi.getAccessToken();
     }
 

@@ -1,6 +1,7 @@
 package ada.spotify.backend.model.playlist;
 
 import ada.spotify.backend.model.track.Music;
+import ada.spotify.backend.model.user.User;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,11 +26,12 @@ public class Playlist {
 
     private String name;
 
-    private Long idUser;
+    @ManyToOne
+    private User user;
 
-    public Playlist(List<Music> playlistTracks, String name, Long idUser) {
+    public Playlist(List<Music> playlistTracks, String name, User user) {
         this.playlistTracks = playlistTracks;
         this.name = name;
-        this.idUser = idUser;
+        this.user = user;
     }
 }
