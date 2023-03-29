@@ -36,7 +36,8 @@ public class WebSecurityConfig {
             "/actuator/**",
             "/health/**",
             // Login
-            "/auth/**"
+            "/auth/**",
+            "/login/**"
     };
 
 

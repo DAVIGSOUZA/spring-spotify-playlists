@@ -20,6 +20,7 @@ import java.util.List;
 @Setter
 @ToString
 @Log4j2
+@Builder
 public class User implements UserDetails {
 
     @Id
@@ -31,8 +32,6 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
-//    @OneToMany
-//    private List<Playlist> playlists;
 
     public User(String username, String email, String password) {
         this.username = username;

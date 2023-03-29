@@ -18,7 +18,7 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    @Value("10")
+    @Value("50645267556B58703273357638792F423F4528482B4D6251655468566D597133")
     private String SECRET;
 
     private Key getSignKInkey(){
