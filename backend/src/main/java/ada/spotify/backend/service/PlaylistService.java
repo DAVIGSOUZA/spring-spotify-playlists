@@ -31,4 +31,6 @@ public class PlaylistService {
     public List<Playlist> findAll() {
         return playlistRepository.findAll();
     }
+
+    public void deleteById(Long id) { playlistRepository.deleteById(id.intValue());}
 }

@@ -20,6 +20,8 @@
       </div>
     </div>
   </div>
+  <button><a href="new-playlist">Criar Playlist</a></button>
+  <button><a href="descobertas-da-semana">Criar Playlist Descobertas da Semana</a></button>
   <div class="container">
     <div class="row justify-content-center">
       <div class="row row-sm-offset">
@@ -28,6 +30,14 @@
         </tr>
         <tr th:each="playlist : ${playlists}">
           <td><span th:text="${playlist.name}"> </span></td>
+          <form method="get" th:action="@{playlist-details/{id}(id=${playlist.id})}">
+            <td><button>Detalhar</button></td>
+          </form>
+          <td>
+            <form method="post" th:action="@{delete/{id}(id=${playlist.id})}">
+              <button>Deletar</button>
+            </form>
+          </td>
         </tr>
       </div>
     </div>

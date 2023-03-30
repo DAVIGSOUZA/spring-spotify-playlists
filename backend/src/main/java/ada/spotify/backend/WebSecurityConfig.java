@@ -27,7 +27,9 @@ public class WebSecurityConfig {
             "swagger-ui.html",
             // Actuators
             "/actuator/**",
-            "/health/**"
+            "/health/**",
+            //Login
+            "/login/**"
     };
 
     @Bean

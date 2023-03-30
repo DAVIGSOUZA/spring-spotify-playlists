@@ -1,6 +1,7 @@
 package ada.spotify.backend.service;
 
-import ada.spotify.backend.model.track.Music;
+import ada.spotify.backend.model.music.Music;
+import ada.spotify.backend.model.playlist.Playlist;
 import ada.spotify.backend.repository.MusicRepository;
 import org.springframework.stereotype.Service;
 
@@ -25,5 +26,9 @@ public class MusicService {
 
     public Music findById(String id) {
         return musicRepository.findById(id);
+    }
+
+    public List<Music> findAll() {
+        return musicRepository.findAll();
     }
 }

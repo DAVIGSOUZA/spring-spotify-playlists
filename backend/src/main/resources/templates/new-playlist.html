@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Nova Playlist</title>
+</head>
+<body>
+<h1>Adicionar Playlist</h1>
+<form th:action="@{add}" method="post">
+  <label for="name">Nome</label>
+  <input type="text" id="name" name="name">
+  <br>
+  <button type="submit" class="button-std">Salvar</button>
+</form>
+</body>
+</html>

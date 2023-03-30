@@ -1,6 +1,6 @@
 package ada.spotify.backend.model.playlist;
 
-import ada.spotify.backend.model.track.Music;
+import ada.spotify.backend.model.music.Music;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,7 +16,7 @@ import java.util.List;
 @ToString
 public class Playlist {
     @JsonManagedReference
-    @ManyToMany(mappedBy = "playlist")
+    @ManyToMany(mappedBy = "playlists")
     private List<Music> playlistTracks;
 
     @Id

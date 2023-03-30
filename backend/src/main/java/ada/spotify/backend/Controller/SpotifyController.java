@@ -2,7 +2,7 @@ package ada.spotify.backend.Controller;
 
 import ada.spotify.backend.APIs.Keys;
 import ada.spotify.backend.model.playlist.Playlist;
-import ada.spotify.backend.model.track.Music;
+import ada.spotify.backend.model.music.Music;
 import ada.spotify.backend.repository.MusicRepository;
 import ada.spotify.backend.repository.PlaylistRepository;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,7 +18,6 @@ import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCrede
 import se.michaelthelin.spotify.model_objects.specification.*;
 import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeRequest;
 import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeUriRequest;
-import se.michaelthelin.spotify.requests.data.personalization.simplified.GetUsersTopArtistsRequest;
 import se.michaelthelin.spotify.requests.data.personalization.simplified.GetUsersTopTracksRequest;
 import se.michaelthelin.spotify.requests.data.search.simplified.SearchArtistsRequest;
 import se.michaelthelin.spotify.requests.data.search.simplified.SearchPlaylistsRequest;
@@ -36,6 +35,7 @@ import java.util.Optional;
 public class SpotifyController {
 
     private final PlaylistRepository playlistRepository;
+
     private final MusicRepository musicRepository;
 
     private static final URI redirectUri = SpotifyHttpManager.makeUri("http://localhost:8080/api/get-user-code/");
@@ -78,7 +78,7 @@ public class SpotifyController {
         } catch (IOException | SpotifyWebApiException | org.apache.hc.core5.http.ParseException e) {
             System.out.println("Error: " + e.getMessage());
         }
-        response.sendRedirect("http://localhost:8080/api/descobertas-da-semana");
+        response.sendRedirect("http://localhost:8080/user/playlists");
         return spotifyApi.getAccessToken();
     }
 
@@ -148,7 +148,6 @@ public class SpotifyController {
         PlaylistSimplified descobertasDaSemana = result.orElse(null);
         final Paging<PlaylistTrack> playlistsItems = spotifyApi.getPlaylistsItems(descobertasDaSemana.getId()).build().execute();
         PlaylistTrack[] playlistTracks = playlistsItems.getItems();
-
         List<String> musicsid = Arrays.asList(playlistTracks).stream()
                 .map(t -> t.getTrack().getId()).toList();
         List<Music> musics = musicsid.stream()
@@ -166,12 +165,10 @@ public class SpotifyController {
                     }
                 })
                 .toList();
-        Playlist playlist = new ada.spotify.backend.model.playlist.Playlist("Descobertas da Semana", musics);
+        Playlist playlist = new Playlist("Descobertas da Semana", musics);
         playlistRepository.save(playlist);
         response.sendRedirect("http://localhost:8080/user/playlists");
-
         return playlist;
-//        for (PlaylistTrack track : playlistTracks)
-//            System.out.println(track.getTrack().getName() + " - " + track.getTrack().getHref());
     }
+
 }

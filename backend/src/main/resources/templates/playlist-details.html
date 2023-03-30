@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Playlist</title>
+</head>
+<body>
+<div class="container min-vh-100 d-flex flex-column" >
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div classs="title">
+                <h2 class="align-center pb-3 display-2 test">
+                    Lista Músicas
+                </h2>
+            </div>
+        </div>
+    </div>
+    <a th:href="@{../playlists}">Lista de Playlists</a>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="row row-sm-offset">
+                <tr th:if="${musics.empty}">
+                    <td colspan="3"> Nenhuma música encontrada </td>
+                </tr>
+                <tr th:each="music : ${musics}">
+                    <td><span th:text="${music.name}"> </span></td>
+                    <td>
+                        <form>
+                            <button>Deletar</button>
+                        </form>
+                    </td>
+                </tr>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

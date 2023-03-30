@@ -1,4 +1,4 @@
-package ada.spotify.backend.model.track;
+package ada.spotify.backend.model.music;
 
 import ada.spotify.backend.model.playlist.Playlist;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -8,7 +8,7 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Table(name = "track")
+@Table(name = "music")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -30,7 +30,7 @@ public class Music {
         @JoinTable(name = "MUSIC_PLAYLIST",
             joinColumns = @JoinColumn(name = "music_id"),
             inverseJoinColumns = @JoinColumn(name = "playlist_id"))
-    private List<Playlist> playlist;
+    private List<Playlist> playlists;
 
     public Music(String album, String href, String id, String name) {
         this.album = album;
