@@ -21,8 +21,6 @@ public class User {
     private String username;
     private String email;
     private String password;
-    @OneToMany
-    private List<Playlist> playlists;
 
     public User(String username, String email, String password) {
         this.username = username;

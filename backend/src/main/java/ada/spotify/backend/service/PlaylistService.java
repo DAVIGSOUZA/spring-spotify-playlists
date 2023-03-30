@@ -27,4 +27,8 @@ public class PlaylistService {
     public Playlist findById(Integer id) {
         return playlistRepository.findById(id).orElse(null);
     }
+
+    public List<Playlist> findAll() {
+        return playlistRepository.findAll();
+    }
 }
