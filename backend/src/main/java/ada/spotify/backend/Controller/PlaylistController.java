@@ -36,7 +36,8 @@ public class PlaylistController {
 
     @GetMapping(value="/playlist-details/{id}")
     public String detalharPlaylist(@PathVariable("id") Long id, Model model){
-        model.addAttribute("musics", musicService.findAll());
+        model.addAttribute("musics", playlistService.findById(id.intValue()).getPlaylistTracks());
+        model.addAttribute("playlist", playlistService.findById(id.intValue()));
         return("playlist-details");
     }
 
@@ -57,7 +58,22 @@ public class PlaylistController {
     @PostMapping("/delete/{id}")
     public String deletePlaylist(@PathVariable("id") Long id)
     {
+        Playlist playlist =  playlistService.findById(id.intValue());
+        for (Music music : playlist.getPlaylistTracks())
+        {
+            music.removePlaylistFromMusic(playlist);
+            musicService.save(music);
+        }
         playlistService.deleteById(id);
         return "redirect:/user/playlists";
+    }
+
+    @PostMapping("/deleteMusic/{idPlaylist}/{idMusic}")
+    public String deleteMusicFromPlaylist(@PathVariable("idPlaylist") Long idPlaylist, @PathVariable("idMusic") String idMusic)
+    {
+        Music music = musicService.findById(idMusic);
+        music.removePlaylistFromMusic(playlistService.findById(idPlaylist.intValue()));
+        musicService.save(music);
+        return "redirect:/user/playlist-details/{idPlaylist}";
     }
 }

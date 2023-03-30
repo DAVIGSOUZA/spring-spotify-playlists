@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,7 +18,7 @@ import java.util.List;
 public class Playlist {
     @JsonManagedReference
     @ManyToMany(mappedBy = "playlists")
-    private List<Music> playlistTracks;
+    private List<Music> playlistTracks = new ArrayList<>();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,14 +28,16 @@ public class Playlist {
 
     private Long idUser;
 
-    public Playlist(List<Music> playlistTracks, String name, Long idUser) {
-        this.playlistTracks = playlistTracks;
+    public Playlist(String name, Long idUser) {
         this.name = name;
         this.idUser = idUser;
     }
 
-    public Playlist(String name, List<Music> playlistTracks) {
-        this.playlistTracks = playlistTracks;
+    public Playlist(String name) {
         this.name = name;
+    }
+
+    public void addMusicToPlaylist(Music music){
+        playlistTracks.add(music);
     }
 }

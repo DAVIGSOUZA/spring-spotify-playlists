@@ -150,23 +150,21 @@ public class SpotifyController {
         PlaylistTrack[] playlistTracks = playlistsItems.getItems();
         List<String> musicsid = Arrays.asList(playlistTracks).stream()
                 .map(t -> t.getTrack().getId()).toList();
-        List<Music> musics = musicsid.stream()
-                .map(id -> {
-                    try {
-                        Music music = searchMusicId(id);
-                        musicRepository.save(music);
-                        return music;
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    } catch (ParseException e) {
-                        throw new RuntimeException(e);
-                    } catch (SpotifyWebApiException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                .toList();
-        Playlist playlist = new Playlist("Descobertas da Semana", musics);
+        Playlist playlist = new Playlist("Descobertas da Semana");
         playlistRepository.save(playlist);
+        for (String id: musicsid) {
+                if (musicRepository.findById(id) == null)
+                {
+                    Music music = searchMusicId(id);
+                    music.addPlaylistToMusic(playlist);
+                    musicRepository.save(music);
+                }
+                else {
+                    Music music = musicRepository.findById(id);
+                    music.addPlaylistToMusic(playlist);
+                    musicRepository.save(music);
+                }
+        }
         response.sendRedirect("http://localhost:8080/user/playlists");
         return playlist;
     }

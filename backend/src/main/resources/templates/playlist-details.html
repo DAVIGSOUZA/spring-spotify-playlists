@@ -9,9 +9,7 @@
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div classs="title">
-                <h2 class="align-center pb-3 display-2 test">
-                    Lista Músicas
-                </h2>
+                <h2 class="align-center pb-3 display-2 test" th:text="${playlist.name}"></h2>
             </div>
         </div>
     </div>
@@ -25,7 +23,7 @@
                 <tr th:each="music : ${musics}">
                     <td><span th:text="${music.name}"> </span></td>
                     <td>
-                        <form>
+                        <form method="post" th:action="@{../deleteMusic/{idPlaylist}/{idMusic} (idPlaylist=${playlist.id}, idMusic=${music.id})}">
                             <button>Deletar</button>
                         </form>
                     </td>
