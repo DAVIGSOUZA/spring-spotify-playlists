@@ -32,4 +32,9 @@ public class Playlist {
         this.name = name;
         this.idUser = idUser;
     }
+
+    public Playlist(String name, List<Music> playlistTracks) {
+        this.playlistTracks = playlistTracks;
+        this.name = name;
+    }
 }
