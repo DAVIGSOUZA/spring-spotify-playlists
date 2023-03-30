@@ -19,6 +19,7 @@ import se.michaelthelin.spotify.model_objects.specification.*;
 import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeRequest;
 import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeUriRequest;
 import se.michaelthelin.spotify.requests.data.personalization.simplified.GetUsersTopArtistsRequest;
+import se.michaelthelin.spotify.requests.data.personalization.simplified.GetUsersTopTracksRequest;
 import se.michaelthelin.spotify.requests.data.search.simplified.SearchArtistsRequest;
 import se.michaelthelin.spotify.requests.data.search.simplified.SearchPlaylistsRequest;
 import se.michaelthelin.spotify.requests.data.search.simplified.SearchTracksRequest;
@@ -77,21 +78,21 @@ public class SpotifyController {
         } catch (IOException | SpotifyWebApiException | org.apache.hc.core5.http.ParseException e) {
             System.out.println("Error: " + e.getMessage());
         }
-        response.sendRedirect("http://localhost:8080/api/user-top-artists");
+        response.sendRedirect("http://localhost:8080/api/descobertas-da-semana");
         return spotifyApi.getAccessToken();
     }
 
-    @GetMapping(value="user-top-artists")
-    public void getUserTopArtists() {
-            final GetUsersTopArtistsRequest getUsersTopArtistsRequest = spotifyApi.getUsersTopArtists()
+    @GetMapping(value="user-top-tracks")
+    public void getUserTopTracks() {
+            final GetUsersTopTracksRequest getUsersTopTracksRequest = spotifyApi.getUsersTopTracks()
                 .limit(10)
                 .offset(0)
                 .build();
         try {
-            final Paging<Artist> artistPaging = getUsersTopArtistsRequest.execute();
-            Artist[] topArtists = artistPaging.getItems();
-            for (Artist artist : topArtists)
-                System.out.println(artist);
+            final Paging<Track> trackPaging = getUsersTopTracksRequest.execute();
+            Track[] topTracks = trackPaging.getItems();
+            for (Track track : topTracks)
+                System.out.println(track);
         } catch (Exception e) {
             System.out.println("We're sorry, something went wrong :(\n" + e.getMessage());
         }
@@ -134,7 +135,7 @@ public class SpotifyController {
     }
 
     @GetMapping(value="descobertas-da-semana")
-    public Playlist descobertasDaSemana() throws IOException, ParseException, SpotifyWebApiException {
+    public Playlist descobertasDaSemana(HttpServletResponse response) throws IOException, ParseException, SpotifyWebApiException {
         final SearchPlaylistsRequest searchPlaylistsRequest = spotifyApi.searchPlaylists("Discover Weekly")
                 .limit(1)
                 .offset(0)
@@ -165,9 +166,11 @@ public class SpotifyController {
                     }
                 })
                 .toList();
-            Playlist playlist = new ada.spotify.backend.model.playlist.Playlist("Descobertas da Seamana", musics);
-            playlistRepository.save(playlist);
-            return playlist;
+        Playlist playlist = new ada.spotify.backend.model.playlist.Playlist("Descobertas da Semana", musics);
+        playlistRepository.save(playlist);
+        response.sendRedirect("http://localhost:8080/user/playlists");
+
+        return playlist;
 //        for (PlaylistTrack track : playlistTracks)
 //            System.out.println(track.getTrack().getName() + " - " + track.getTrack().getHref());
     }
