@@ -108,7 +108,6 @@ public class SpotifyController {
             return new Music(t.getAlbum().getName(), t.getHref(), t.getId(), t.getName());
         })
                 .toList();
-
     }
     @GetMapping(value="search/music/{id}")
     public Music searchMusicId(@PathVariable String id) throws IOException, ParseException, SpotifyWebApiException {
