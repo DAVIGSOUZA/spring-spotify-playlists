@@ -18,8 +18,8 @@ public class Music {
 
     private String album;
 
-    @ElementCollection
-    private List<String> artists;
+    //@ElementCollection
+    //private List<String> artists;
     private String href;
     @Id
     private String id;
@@ -32,4 +32,10 @@ public class Music {
             inverseJoinColumns = @JoinColumn(name = "playlist_id"))
     private List<Playlist> playlist;
 
+    public Music(String album, String href, String id, String name) {
+        this.album = album;
+        this.href = href;
+        this.id = id;
+        this.name = name;
+    }
 }
