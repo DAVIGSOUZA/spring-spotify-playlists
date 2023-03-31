@@ -20,27 +20,46 @@
       </div>
     </div>
   </div>
-  <button><a href="new-playlist">Criar Playlist</a></button>
-  <button><a href="import-from-spotify">Importar Playlists Spotify</a></button>
-  <button><a href="descobertas-da-semana">Criar Playlist Descobertas da Semana</a></button>
-  <button><a href="user-top-tracks">Criar Playlist Top 50</a></button>
   <div class="container">
     <div class="row justify-content-center">
-      <div class="row row-sm-offset">
-        <tr th:if="${playlists.empty}">
-          <td colspan="3"> Nenhuma playlist encontrada </td>
-        </tr>
-        <tr th:each="playlist : ${playlists}">
-          <td><span th:text="${playlist.name}"> </span></td>
-          <form method="get" th:action="@{playlist-details/{id}(id=${playlist.id})}">
-            <td><button>Detalhar</button></td>
-          </form>
-          <td>
-            <form method="post" th:action="@{delete/{id}(id=${playlist.id})}">
-              <button>Deletar</button>
-            </form>
-          </td>
-        </tr>
+      <div class="d-flex" >
+        <a href="new-playlist">
+          <button class="btn btn-primary btn-form display-4 mt-3">
+            Criar Playlist
+          </button>
+        </a>
+        <a href="descobertas-da-semana">
+          <button class="btn btn-primary btn-form display-4 mt-3 ms-3">
+            Criar Playlist Descobertas da Semana
+          </button>
+        </a>
+        <button><a href="import-from-spotify">Importar Playlists Spotify</a></button>
+        <button><a href="user-top-tracks">Criar Playlist Top 50</a></button>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="row row-sm-offset mt-3">
+        <ul class="list-group" th:if="${playlists.empty}">
+          <li class="list-group-item">Nenhuma playlist encontrada</li>
+        </ul>
+
+        <ul class="list-group" th:each="playlist : ${playlists}">
+          <li class="list-group-item d-flex justify-content-between align-items-center mt-1">
+            <span class="h4" th:text="${playlist.name}"> </span>
+
+            <div class="btn-group">
+              <form method="get" th:action="@{playlist-details/{id}(id=${playlist.id})}">
+                <button class="btn btn-info">Detalhar</button>
+              </form>
+
+              <form method="post" th:action="@{delete/{id}(id=${playlist.id})}">
+                <button class="btn btn-danger ms-3">Deletar</button>
+              </form>
+            </div>
+          </li>
+        </ul>
       </div>
     </div>
   </div>

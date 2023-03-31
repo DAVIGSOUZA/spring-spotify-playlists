@@ -1,16 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Nova Playlist</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" media="all" href="../../css/style.css" th:href="@{/css/style.css}" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-<h1>Adicionar Playlist</h1>
-<form th:action="@{add}" method="post">
-  <label for="name">Nome</label>
-  <input type="text" id="name" name="name">
-  <br>
-  <button type="submit" class="button-std">Salvar</button>
-</form>
+<div class="container min-vh-100 d-flex flex-column">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div classs="title">
+                <h2 class="align-center pb-3 display-2 test">
+                    Adicionar Playlist
+                </h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="row row-sm-offset">
+                <a th:href="@{../playlists}">
+                    <button class="btn btn-outline-primary mt-1">Voltar</button>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-3">
+        <div class="row justify-content-center">
+            <div class="row row-sm-offset">
+                <form th:action="@{add}" method="post">
+                    <div class="multi-horizontal">
+                        <div>
+                            <label for="name" class="form-control-label"> Nome : </label>
+                        </div>
+                        <input id="name" name="name"/>
+                    </div>
+                    <input class="btn btn-primary btn-form display-4 mt-3" type="submit" value="Salvar"/>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
