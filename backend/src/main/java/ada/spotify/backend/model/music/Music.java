@@ -25,6 +25,7 @@ public class Music {
     @Id
     private String id;
     private String name;
+    private String img;
 
     @JsonBackReference
     @ManyToMany
@@ -33,11 +34,12 @@ public class Music {
             inverseJoinColumns = @JoinColumn(name = "playlist_id"))
     private List<Playlist> playlists = new ArrayList<>();
 
-    public Music(String album, String href, String id, String name) {
+    public Music(String album, String href, String id, String name, String img) {
         this.album = album;
         this.href = href;
         this.id = id;
         this.name = name;
+        this.img = img;
     }
 
     public void addPlaylistToMusic(Playlist playlist)

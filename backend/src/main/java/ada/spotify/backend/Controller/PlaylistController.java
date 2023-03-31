@@ -76,4 +76,9 @@ public class PlaylistController {
         musicService.save(music);
         return "redirect:/user/playlist-details/{idPlaylist}";
     }
+
+//    @GetMapping("searchMusic/{q}")
+//    public String searchMusic(@PathVariable("q") String name){
+//    }
+
 }
