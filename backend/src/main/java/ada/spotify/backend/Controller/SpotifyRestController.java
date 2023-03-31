@@ -1,17 +1,14 @@
 package ada.spotify.backend.Controller;
 
 import ada.spotify.backend.APIs.Keys;
-import ada.spotify.backend.Session;
 import ada.spotify.backend.model.playlist.Playlist;
 import ada.spotify.backend.model.music.Music;
-import ada.spotify.backend.repository.UserRepository;
-import ada.spotify.backend.service.MusicService;
-import ada.spotify.backend.service.PlaylistService;
+import ada.spotify.backend.repository.MusicRepository;
+import ada.spotify.backend.repository.PlaylistRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.hc.core5.http.ParseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import se.michaelthelin.spotify.SpotifyApi;
@@ -33,18 +30,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-@Controller
-@RequestMapping("/user")
-public class SpotifyController {
+@RestController
+@RequestMapping("/api2")
+public class SpotifyRestController {
 
-    private final PlaylistService playlistService;
+    private final PlaylistRepository playlistRepository;
 
-    private final MusicService musicService;
+    private final MusicRepository musicRepository;
 
-    private final UserRepository userRepository;
-
-    private static final URI redirectUri = SpotifyHttpManager.makeUri("http://localhost:8080/user/get-user-code/");
-
+    private static final URI redirectUri = SpotifyHttpManager.makeUri("http://localhost:8080/api/get-user-code/");
     private String code = "";
 
     private static final SpotifyApi spotifyApi = new SpotifyApi.Builder()
@@ -53,10 +47,9 @@ public class SpotifyController {
             .setRedirectUri(redirectUri)
             .build();
 
-    public SpotifyController(PlaylistService playlistService, MusicService musicService, UserRepository userRepository) {
-        this.playlistService = playlistService;
-        this.musicService = musicService;
-        this.userRepository = userRepository;
+    public SpotifyRestController(PlaylistRepository playlistRepository, MusicRepository musicRepository) {
+        this.playlistRepository = playlistRepository;
+        this.musicRepository = musicRepository;
     }
 
     @GetMapping("login")
@@ -81,28 +74,20 @@ public class SpotifyController {
             spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
             spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
 
-            //fazer validação se o usuário existe
-            User user = spotifyApi.getCurrentUsersProfile().build().execute();
-            ada.spotify.backend.model.user.User internalUser = new ada.spotify.backend.model.user.User(user.getDisplayName(), user.getEmail(), user.getId());
-            ada.spotify.backend.model.user.User createdUser = userRepository.save(internalUser);
-            Session.setSpotifyApi(spotifyApi);
-            Session.setUser(createdUser);
-
-
             System.out.println("Expires in: " + authorizationCodeCredentials.getExpiresIn());
         } catch (IOException | SpotifyWebApiException | org.apache.hc.core5.http.ParseException e) {
             System.out.println("Error: " + e.getMessage());
         }
-        return("redirect:/user/playlists");
+        response.sendRedirect("http://localhost:8080/user/playlists");
+        return spotifyApi.getAccessToken();
     }
 
     @GetMapping(value="user-top-tracks")
     public void getUserTopTracks() {
-            final GetUsersTopTracksRequest getUsersTopTracksRequest = spotifyApi.getUsersTopTracks()
+        final GetUsersTopTracksRequest getUsersTopTracksRequest = spotifyApi.getUsersTopTracks()
                 .limit(10)
                 .offset(0)
                 .build();
-
         try {
             final Paging<Track> trackPaging = getUsersTopTracksRequest.execute();
             Track[] topTracks = trackPaging.getItems();
@@ -114,46 +99,16 @@ public class SpotifyController {
     }
 
     @GetMapping(value="search/music")
-    public String searchMusicName(@RequestParam("q") String q, Model model) throws IOException, ParseException, SpotifyWebApiException {
+    public List<Music> searchMusicName(@RequestParam("q") String q, Model model) throws IOException, ParseException, SpotifyWebApiException {
         final SearchTracksRequest searchTracksRequest = spotifyApi.searchTracks(q)
-                .limit(5)
                 .offset(0)
                 .build();
-        List<Music> list = Arrays.asList(searchTracksRequest.execute().getItems()).stream()
+        return Arrays.asList(searchTracksRequest.execute().getItems()).stream()
                 .map(t -> {
                     return new Music(t.getAlbum().getName(), t.getHref(), t.getId(), t.getName(), Arrays.stream(t.getAlbum().getImages()).findFirst().get().getUrl());
                 })
                 .toList();
-        for (Music music: list) {
-            musicService.save(music);
-        }
-        model.addAttribute("musicquery", list);
-        model.addAttribute("playlists", playlistService.findAll());
-        Long playlistEscolhida = 0L;
-        model.addAttribute("playlistEscolhida", playlistEscolhida);
-        return "music-search";
     }
-
-
-    @PostMapping(value="save-in-playlist/{musicId}")
-    public String saveInPlaylist(@PathVariable String musicId, @RequestParam(value="playlistEscolhida") String playlistEscolhida){
-        Music music = musicService.findById(musicId);
-        music.addPlaylistToMusic(playlistService.findById(Integer.parseInt(playlistEscolhida)));
-        musicService.save(music);
-        return "redirect:/user/playlists";
-    }
-
-
-//    @PostMapping(value="save-in-playlist/{playlistId}/{musicId}")
-//    public String saveInPlaylist(@PathVariable Long playlistId, @PathVariable String musicId){
-//       Music music = musicService.findById(musicId);
-//       music.addPlaylistToMusic(playlistService.findById(playlistId.intValue()));
-//        return "redirect:/user/playlist-details/{playlistId}";
-//    }
-
-
-
-
     @GetMapping(value="search/music/{id}")
     public Music searchMusicId(@PathVariable String id) throws IOException, ParseException, SpotifyWebApiException {
         final GetTrackRequest getTrackRequest = spotifyApi.getTrack(id).build();
@@ -179,7 +134,7 @@ public class SpotifyController {
     }
 
     @GetMapping(value="descobertas-da-semana")
-    public String descobertasDaSemana(HttpServletResponse response) throws IOException, ParseException, SpotifyWebApiException {
+    public Playlist descobertasDaSemana(HttpServletResponse response) throws IOException, ParseException, SpotifyWebApiException {
         final SearchPlaylistsRequest searchPlaylistsRequest = spotifyApi.searchPlaylists("Discover Weekly")
                 .limit(1)
                 .offset(0)
@@ -195,70 +150,22 @@ public class SpotifyController {
         List<String> musicsid = Arrays.asList(playlistTracks).stream()
                 .map(t -> t.getTrack().getId()).toList();
         Playlist playlist = new Playlist("Descobertas da Semana");
-        playlistService.save(playlist);
+        playlistRepository.save(playlist);
         for (String id: musicsid) {
-                if (musicService.findById(id) == null)
-                {
-                    Music music = searchMusicId(id);
-                    music.addPlaylistToMusic(playlist);
-                    musicService.save(music);
-                }
-                else {
-                    Music music = musicService.findById(id);
-                    music.addPlaylistToMusic(playlist);
-                    musicService.save(music);
-                }
+            if (musicRepository.findById(id) == null)
+            {
+                Music music = searchMusicId(id);
+                music.addPlaylistToMusic(playlist);
+                musicRepository.save(music);
+            }
+            else {
+                Music music = musicRepository.findById(id);
+                music.addPlaylistToMusic(playlist);
+                musicRepository.save(music);
+            }
         }
-        return("redirect:/user/playlists");
-    }
-
-    @GetMapping(value = "playlists")
-    public String findAllPlaylist(Model model){
-        model.addAttribute("playlists", playlistService.findAll());
-        return "playlists";
-    }
-
-    @GetMapping(value="new-playlist")
-    public String createPlaylist(){
-        return("new-playlist");
-    }
-
-    @GetMapping(value="/playlist-details/{id}")
-    public String detalharPlaylist(@PathVariable("id") Long id, Model model){
-        model.addAttribute("musics", playlistService.findById(id.intValue()).getPlaylistTracks());
-        model.addAttribute("playlist", playlistService.findById(id.intValue()));
-        return("playlist-details");
-    }
-
-    @PostMapping("/add")
-    public String addNewPlaylist(@RequestParam("name") String name)
-    {
-        Playlist playlist = new Playlist();
-        playlist.setName(name);
-        playlistService.save(playlist);
-        return "redirect:playlists";
-    }
-
-    @PostMapping("/delete/{id}")
-    public String deletePlaylist(@PathVariable("id") Long id)
-    {
-        Playlist playlist =  playlistService.findById(id.intValue());
-        for (Music music : playlist.getPlaylistTracks())
-        {
-            music.removePlaylistFromMusic(playlist);
-            musicService.save(music);
-        }
-        playlistService.deleteById(id);
-        return "redirect:/user/playlists";
-    }
-
-    @PostMapping("/deleteMusic/{idPlaylist}/{idMusic}")
-    public String deleteMusicFromPlaylist(@PathVariable("idPlaylist") Long idPlaylist, @PathVariable("idMusic") String idMusic)
-    {
-        Music music = musicService.findById(idMusic);
-        music.removePlaylistFromMusic(playlistService.findById(idPlaylist.intValue()));
-        musicService.save(music);
-        return "redirect:/user/playlist-details/{idPlaylist}";
+        response.sendRedirect("http://localhost:8080/user/playlists");
+        return playlist;
     }
 
 }

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<tr th:if="${musicquery.empty}">
+    <td colspan="3"> Nenhuma música encontrada </td>
+</tr>
+<tr th:each="music : ${musicquery}">
+    <td><span th:text="${music.name}"> </span></td>
+    <td><span th:text="${music.album}"> </span></td>
+    <td>
+        <form  method="post" th:action="@{../save-in-playlist/{musicId} (musicId=${music.id})}">
+            <select th:name="playlistEscolhida">
+                <option th:each="playlist : ${playlists}"
+                        th:value="${playlist.id}"
+                        th:text="${playlist.name}">
+                </option>
+            </select>
+            <button type="submit">Adicionar</button>
+        </form>
+    </td>
+</tr>
+</body>
+</html>

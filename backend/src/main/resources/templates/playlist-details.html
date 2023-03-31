@@ -14,7 +14,7 @@
         </div>
     </div>
     <a th:href="@{../playlists}">Voltar</a>
-    <form form method="post" th:action="@{./search}">
+    <form method="get" th:action="@{../search/music}">
         <input type="text" name="q" placeholder="Pesquisar Música"></input>
         <button type="submit">Ok</a></button>
     </form>
