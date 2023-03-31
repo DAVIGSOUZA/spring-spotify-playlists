@@ -1,8 +1,10 @@
 package ada.spotify.backend.Controller;
 
 import ada.spotify.backend.APIs.Keys;
+import ada.spotify.backend.Session;
 import ada.spotify.backend.model.playlist.Playlist;
 import ada.spotify.backend.model.music.Music;
+import ada.spotify.backend.repository.UserRepository;
 import ada.spotify.backend.service.MusicService;
 import ada.spotify.backend.service.PlaylistService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -39,9 +41,10 @@ public class SpotifyController {
 
     private final MusicService musicService;
 
-
+    private final UserRepository userRepository;
 
     private static final URI redirectUri = SpotifyHttpManager.makeUri("http://localhost:8080/user/get-user-code/");
+
     private String code = "";
 
     private static final SpotifyApi spotifyApi = new SpotifyApi.Builder()
@@ -50,9 +53,10 @@ public class SpotifyController {
             .setRedirectUri(redirectUri)
             .build();
 
-    public SpotifyController(PlaylistService playlistService, MusicService musicService) {
+    public SpotifyController(PlaylistService playlistService, MusicService musicService, UserRepository userRepository) {
         this.playlistService = playlistService;
         this.musicService = musicService;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("login")
@@ -77,6 +81,14 @@ public class SpotifyController {
             spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
             spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
 
+            //fazer validação se o usuário existe
+            User user = spotifyApi.getCurrentUsersProfile().build().execute();
+            ada.spotify.backend.model.user.User internalUser = new ada.spotify.backend.model.user.User(user.getDisplayName(), user.getEmail(), user.getId());
+            ada.spotify.backend.model.user.User createdUser = userRepository.save(internalUser);
+            Session.setSpotifyApi(spotifyApi);
+            Session.setUser(createdUser);
+
+
             System.out.println("Expires in: " + authorizationCodeCredentials.getExpiresIn());
         } catch (IOException | SpotifyWebApiException | org.apache.hc.core5.http.ParseException e) {
             System.out.println("Error: " + e.getMessage());
@@ -90,6 +102,7 @@ public class SpotifyController {
                 .limit(10)
                 .offset(0)
                 .build();
+
         try {
             final Paging<Track> trackPaging = getUsersTopTracksRequest.execute();
             Track[] topTracks = trackPaging.getItems();
