@@ -22,33 +22,38 @@
   </div>
   <div class="container">
     <div class="row justify-content-center">
-      <div class="d-flex" >
-        <a href="new-playlist">
-          <button class="btn btn-primary btn-form display-4 mt-3">
-            Criar Playlist
-          </button>
-        </a>
-        <a href="import-from-spotify">
-          <button class="btn btn-primary btn-form display-4 mt-3 ms-3">
-            Importar Playlists Spotify
-          </button>
-        </a>
-        <a href="user-top-tracks">
-          <button class="btn btn-primary btn-form display-4 mt-3 ms-3">
-            Criar Playlist Top 50
-          </button>
-        </a>
-        <a href="descobertas-da-semana">
-          <button class="btn btn-primary btn-form display-4 mt-3 ms-3">
-            Criar Playlist Descobertas da Semana
-          </button>
+      <div class="d-flex flex-wrap justify-content-between" >
+        <div class="d-flex flex-wrap">
+          <a href="new-playlist">
+            <button class="btn btn-primary btn-form display-4 mt-3 mx-1">
+              Criar Playlist
+            </button>
+          </a>
+          <a href="import-from-spotify">
+            <button class="btn btn-primary btn-form display-4 mt-3 mx-1">
+              Importar Playlists Spotify
+            </button>
+          </a>
+          <a href="user-top-tracks">
+            <button class="btn btn-primary btn-form display-4 mt-3 mx-1">
+              Criar Playlist Top 50
+            </button>
+          </a>
+          <a href="descobertas-da-semana">
+            <button class="btn btn-primary btn-form display-4 mt-3 mx-1">
+              Criar Playlist Descobertas da Semana
+            </button>
+          </a>
+        </div>
+        <a th:href="@{/logout}">
+          <button class="btn btn-danger mt-3 mx-1">Logout</button>
         </a>
       </div>
     </div>
   </div>
   <div class="container">
     <div class="row justify-content-center">
-      <div class="row row-sm-offset mt-3">
+      <div class="row row-sm-offset mt-3 ms-1">
         <ul class="list-group" th:if="${playlists.empty}">
           <li class="list-group-item">Nenhuma playlist encontrada</li>
         </ul>
@@ -71,7 +76,6 @@
       </div>
     </div>
   </div>
-  <a th:href="@{/logout}">Logout</a>
 </div>
 </body>
 </html>
