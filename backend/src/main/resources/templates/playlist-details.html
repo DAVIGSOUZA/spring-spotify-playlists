@@ -17,18 +17,25 @@
         </div>
     </div>
 
-    <a th:href="@{../playlists}">Voltar</a>
-    <form form method="post" th:action="@{./search}">
-        <input type="text" name="q" placeholder="Pesquisar Música"></input>
-        <button type="submit">Ok</a></button>
-    </form>
+    <div class="row justify-content-center">
+        <a th:href="@{../playlists}">
+            <button class="btn btn-outline-primary mt-1">Voltar</button>
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <form class="d-flex mt-3" form method="post" th:action="@{./search}">
+            <input class="form-control me-2" type="search" name="q" placeholder="Pesquisar Música" aria-label="Search">
+            <button class="btn btn-primary" type="submit">Buscar</button>
+        </form>
+    </div>
 
     <div class="row justify-content-center mt-3">
         <tr th:if="${musics.empty}">
             <td colspan="3"> Nenhuma música encontrada </td>
         </tr>
 
-        <div class="card m-1 p-2" style="width: 18rem;" th:each="music : ${musics}">
+        <div class="card m-2 p-2" style="width: 18rem;" th:each="music : ${musics}">
                 <img th:src="@{${music.img}}" class="card-img-top" style="width: 100&;" alt="...">
 
                 <div class="card-body">
