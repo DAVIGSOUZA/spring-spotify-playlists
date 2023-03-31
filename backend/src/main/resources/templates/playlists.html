@@ -26,7 +26,7 @@
     <div class="row justify-content-center">
       <div class="row row-sm-offset">
         <tr th:if="${playlists.empty}">
-          <td colspan="3"> Nenhuma playslist encontrada </td>
+          <td colspan="3"> Nenhuma playlist encontrada </td>
         </tr>
         <tr th:each="playlist : ${playlists}">
           <td><span th:text="${playlist.name}"> </span></td>

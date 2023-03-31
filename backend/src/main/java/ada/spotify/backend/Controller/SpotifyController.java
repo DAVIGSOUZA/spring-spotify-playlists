@@ -81,9 +81,7 @@ public class SpotifyController {
         } catch (IOException | SpotifyWebApiException | org.apache.hc.core5.http.ParseException e) {
             System.out.println("Error: " + e.getMessage());
         }
-//        response.sendRedirect("http://localhost:8080/user/playlists");
         return("redirect:/user/playlists");
-//        return spotifyApi.getAccessToken();
     }
 
     @GetMapping(value="user-top-tracks")
@@ -113,15 +111,35 @@ public class SpotifyController {
                     return new Music(t.getAlbum().getName(), t.getHref(), t.getId(), t.getName(), Arrays.stream(t.getAlbum().getImages()).findFirst().get().getUrl());
                 })
                 .toList();
-        model.addAttribute("music-query", list);
+        for (Music music: list) {
+            musicService.save(music);
+        }
+        model.addAttribute("musicquery", list);
         model.addAttribute("playlists", playlistService.findAll());
+        Long playlistEscolhida = 0L;
+        model.addAttribute("playlistEscolhida", playlistEscolhida);
         return "music-search";
     }
 
-//    @PostMapping(value="{idPlaylist}/save-in-playlist")
-//    public String saveInPlaylist(@RequestBody Music music, @RequestBody Playlist playist){
-//
+
+    @PostMapping(value="save-in-playlist/{musicId}")
+    public String saveInPlaylist(@PathVariable String musicId, @RequestParam(value="playlistEscolhida") String playlistEscolhida){
+        Music music = musicService.findById(musicId);
+        music.addPlaylistToMusic(playlistService.findById(Integer.parseInt(playlistEscolhida)));
+        musicService.save(music);
+        return "redirect:/user/playlists";
+    }
+
+
+//    @PostMapping(value="save-in-playlist/{playlistId}/{musicId}")
+//    public String saveInPlaylist(@PathVariable Long playlistId, @PathVariable String musicId){
+//       Music music = musicService.findById(musicId);
+//       music.addPlaylistToMusic(playlistService.findById(playlistId.intValue()));
+//        return "redirect:/user/playlist-details/{playlistId}";
 //    }
+
+
+
 
     @GetMapping(value="search/music/{id}")
     public Music searchMusicId(@PathVariable String id) throws IOException, ParseException, SpotifyWebApiException {
