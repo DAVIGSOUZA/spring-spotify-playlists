@@ -24,7 +24,7 @@
     </div>
 
     <div class="row justify-content-center">
-        <form class="d-flex mt-3" form method="post" th:action="@{./search}">
+        <form class="d-flex mt-3" method="get" th:action="@{../search/music}">
             <input class="form-control me-2" type="search" name="q" placeholder="Pesquisar Música" aria-label="Search">
             <button class="btn btn-primary" type="submit">Buscar</button>
         </form>
@@ -36,32 +36,32 @@
         </tr>
 
         <div class="card m-2 p-2" style="width: 18rem;" th:each="music : ${musics}">
-                <img th:src="@{${music.img}}" class="card-img-top" style="width: 100&;" alt="...">
+            <img th:src="@{${music.img}}" class="card-img-top" style="width: 100&;" alt="...">
 
-                <div class="card-body">
-                    <h5 class="card-title" th:text="${music.name}"></h5>
+            <div class="card-body">
+                <h5 class="card-title" th:text="${music.name}"></h5>
 
-                    <p class="card-text" th:text="${music.album}"></p>
+                <p class="card-text" th:text="${music.album}"></p>
 
-                    <div clss="d-flex justify-content-between align-items-between mt-3">
-                        <a
-                            th:href="@{https://open.spotify.com/track/{musicId} (musicId=${music.id})}"
-                            target="_blank"
-                            class="btn btn-primary"
-                        >
-                            Ouvir no spotify
-                        </a>
+                <div clss="d-flex justify-content-between align-items-between mt-3">
+                  <a
+                      th:href="@{https://open.spotify.com/track/{musicId} (musicId=${music.id})}"
+                      target="_blank"
+                      class="btn btn-primary"
+                  >
+                      Ouvir no spotify
+                  </a>
 
-                        <form
-                            class="d-inline"
-                            method="post"
-                            th:action="@{../deleteMusic/{idPlaylist}/{idMusic} (idPlaylist=${playlist.id}, idMusic=${music.id})}"
-                        >
-                            <button class="btn btn-danger">Deletar</button>
-                        </form>
-                    </div>
+                  <form
+                    class="d-inline"
+                    method="post"
+                    th:action="@{../deleteMusic/{idPlaylist}/{idMusic} (idPlaylist=${playlist.id}, idMusic=${music.id})}"
+                  >
+                    <button class="btn btn-danger">Deletar</button>
+                  </form>
                 </div>
             </div>
+        </div>
     </div>
 </div>
 </body>
