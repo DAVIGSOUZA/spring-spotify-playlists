@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface PlaylistRepository extends JpaRepository<Playlist, Integer> {
     List<Playlist> findByName(String nome);
+    List<Playlist> findByIdUser(Long idUser);
 }

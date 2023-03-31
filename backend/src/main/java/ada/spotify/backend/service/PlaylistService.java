@@ -1,6 +1,7 @@
 package ada.spotify.backend.service;
 
 import ada.spotify.backend.model.playlist.Playlist;
+import ada.spotify.backend.model.user.User;
 import ada.spotify.backend.repository.PlaylistRepository;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,10 @@ public class PlaylistService {
 
     public List<Playlist> findAll() {
         return playlistRepository.findAll();
+    }
+
+    public List<Playlist> findByIdUser(User user) {
+        return playlistRepository.findByIdUser(user.getId());
     }
 
     public void deleteById(Long id) { playlistRepository.deleteById(id.intValue());}

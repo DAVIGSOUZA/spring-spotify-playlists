@@ -289,7 +289,7 @@ public class SpotifyController {
     //cadastrar playlist com usuário
     @GetMapping(value = "playlists")
     public String findAllPlaylist(Model model) throws IOException, ParseException, SpotifyWebApiException {
-        model.addAttribute("playlists", playlistService.findAll());
+        model.addAttribute("playlists", playlistService.findByIdUser(Session.user));
         return "playlists";
     }
 
