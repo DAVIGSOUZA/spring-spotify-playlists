@@ -109,7 +109,7 @@ public class SpotifyController {
     @GetMapping(value="search/music")
     public String searchMusicName(@RequestParam("q") String q, Model model) throws IOException, ParseException, SpotifyWebApiException {
         final SearchTracksRequest searchTracksRequest = spotifyApi.searchTracks(q)
-                .limit(5)
+                .limit(20)
                 .offset(0)
                 .build();
         List<Music> list = Arrays.asList(searchTracksRequest.execute().getItems()).stream()
