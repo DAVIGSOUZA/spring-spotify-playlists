@@ -250,26 +250,41 @@ public class SpotifyController {
         return "redirect:/user/playlist-details/{idPlaylist}";
     }
 
-        //cadastrar playlist com usuário
-    @GetMapping(value = "playlists")
-    public String findAllPlaylist(Model model) throws IOException, ParseException, SpotifyWebApiException {
+    @GetMapping(value = "import-from-spotify")
+    public String findAllPlaylist() throws IOException, ParseException, SpotifyWebApiException {
 
         PlaylistSimplified[] spotifyPlaylists = Session.spotifyApi.getListOfCurrentUsersPlaylists().build().execute().getItems();
 
         for (PlaylistSimplified spotifyPlaylist : spotifyPlaylists) {
-            Playlist p = new Playlist(spotifyPlaylist.getName(),Session.user.getId());
+            Playlist p = new Playlist(spotifyPlaylist.getName(), Session.user.getId());
             playlistService.save(p);
-
+            final Paging<PlaylistTrack> playlistsItems = spotifyApi.getPlaylistsItems(spotifyPlaylist.getId()).build().execute();
+            PlaylistTrack[] playlistTracks = playlistsItems.getItems();
+            List<String> musicsid = Arrays.asList(playlistTracks).stream()
+                    .map(t -> t.getTrack().getId()).toList();
+            for (String id : musicsid) {
+                if (musicService.findById(id) == null) {
+                    Music music = searchMusicId(id);
+                    music.addPlaylistToMusic(p);
+                    musicService.save(music);
+                } else {
+                    Music music = musicService.findById(id);
+                    music.addPlaylistToMusic(p);
+                    musicService.save(music);
+                }
+            }
         }
+        return "redirect:/user/playlists";
+    }
+
+
+    //cadastrar playlist com usuário
+    @GetMapping(value = "playlists")
+    public String findAllPlaylist(Model model) throws IOException, ParseException, SpotifyWebApiException {
         model.addAttribute("playlists", playlistService.findAll());
         return "playlists";
     }
 
-
-    //    @GetMapping(value = "playlists")
-//    public String findAllPlaylist(Model model){
-//        model.addAttribute("playlists", playlistService.findAll());
-//        return "playlists";
-//    }
+    
 
 }
