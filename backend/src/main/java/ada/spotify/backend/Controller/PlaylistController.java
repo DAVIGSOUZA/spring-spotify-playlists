@@ -1,13 +1,21 @@
 package ada.spotify.backend.Controller;
 
+import ada.spotify.backend.Session;
 import ada.spotify.backend.model.music.Music;
 import ada.spotify.backend.model.playlist.Playlist;
 import ada.spotify.backend.service.MusicService;
 import ada.spotify.backend.service.PlaylistService;
+import org.apache.hc.core5.http.ParseException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import se.michaelthelin.spotify.SpotifyApi;
+import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
+import se.michaelthelin.spotify.model_objects.specification.PlaylistSimplified;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -18,14 +26,29 @@ public class PlaylistController {
 
     private final MusicService musicService;
 
+    private static SpotifyApi spotifyApi;
+
     public PlaylistController(PlaylistService playlistService, MusicService musicService) {
         this.playlistService = playlistService;
         this.musicService = musicService;
     }
-
+    //cadastrar playlist com usuário
     @GetMapping(value = "playlists")
-    public String findAllPlaylist(Model model){
+    public String findAllPlaylist(Model model) throws IOException, ParseException, SpotifyWebApiException {
         model.addAttribute("playlists", playlistService.findAll());
+        /*PlaylistSimplified[] spotifyPlaylists = Session.spotifyApi.getListOfCurrentUsersPlaylists().build().execute().getItems();
+
+
+        List<Playlist> playlists = new ArrayList<>();
+
+        for (PlaylistSimplified spotifyPlaylist : spotifyPlaylists) {
+            Playlist p = new Playlist(spotifyPlaylist.getName(),Session.user.getId());
+            playlistService.save(p);
+
+        }
+
+        model.addAttribute("playlists", playlists);*/
+
         return "playlists";
     }
 
@@ -51,6 +74,7 @@ public class PlaylistController {
     {
         Playlist playlist = new Playlist();
         playlist.setName(name);
+        playlist.setIdUser(Session.user.getId());
         playlistService.save(playlist);
         return "redirect:playlists";
     }
@@ -76,4 +100,5 @@ public class PlaylistController {
         musicService.save(music);
         return "redirect:/user/playlist-details/{idPlaylist}";
     }
+
 }
