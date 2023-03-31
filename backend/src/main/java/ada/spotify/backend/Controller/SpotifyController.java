@@ -84,13 +84,21 @@ public class SpotifyController {
             spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
 
             //fazer validação se o usuário existe
-            User user = spotifyApi.getCurrentUsersProfile().build().execute();
-            ada.spotify.backend.model.user.User internalUser = new ada.spotify.backend.model.user.User(user.getDisplayName(), user.getEmail(), user.getId());
-            ada.spotify.backend.model.user.User createdUser = userService.save(internalUser);
-            Session.setSpotifyApi(spotifyApi);
-            Session.setUser(createdUser);
-
-
+            ada.spotify.backend.model.user.User internalUser;
+            List<ada.spotify.backend.model.user.User> listUsers = userService.findByEmail(spotifyApi.getCurrentUsersProfile().build().execute().getEmail());
+            if (listUsers.isEmpty())
+            {
+                User user = spotifyApi.getCurrentUsersProfile().build().execute();
+                internalUser = new ada.spotify.backend.model.user.User(user.getDisplayName(), user.getEmail(), user.getId());
+                ada.spotify.backend.model.user.User createdUser = userService.save(internalUser);
+                Session.setSpotifyApi(spotifyApi);
+                Session.setUser(createdUser);
+            }
+            else {
+                internalUser = listUsers.get(0);
+                Session.setSpotifyApi(spotifyApi);
+                Session.setUser(internalUser);
+            }
             System.out.println("Expires in: " + authorizationCodeCredentials.getExpiresIn());
         } catch (IOException | SpotifyWebApiException | org.apache.hc.core5.http.ParseException e) {
             System.out.println("Error: " + e.getMessage());
