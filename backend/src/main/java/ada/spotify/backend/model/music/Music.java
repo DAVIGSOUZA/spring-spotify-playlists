@@ -5,8 +5,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "music")
@@ -32,7 +31,7 @@ public class Music {
     @JoinTable(name = "MUSIC_PLAYLIST",
          joinColumns = @JoinColumn(name = "music_id"),
             inverseJoinColumns = @JoinColumn(name = "playlist_id"))
-    private List<Playlist> playlists = new ArrayList<>();
+    private Set<Playlist> playlists = new LinkedHashSet<>();
 
     public Music(String album, String href, String id, String name, String img) {
         this.album = album;
