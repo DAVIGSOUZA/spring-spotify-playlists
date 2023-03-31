@@ -105,7 +105,7 @@ public class SpotifyController {
                 .build();
         return Arrays.asList(searchTracksRequest.execute().getItems()).stream()
                 .map(t -> {
-            return new Music(t.getAlbum().getName(), t.getHref(), t.getId(), t.getName());
+            return new Music(t.getAlbum().getName(), t.getHref(), t.getId(), t.getName(), Arrays.stream(t.getAlbum().getImages()).findFirst().get().getUrl());
         })
                 .toList();
     }
@@ -113,7 +113,7 @@ public class SpotifyController {
     public Music searchMusicId(@PathVariable String id) throws IOException, ParseException, SpotifyWebApiException {
         final GetTrackRequest getTrackRequest = spotifyApi.getTrack(id).build();
         final Track track = getTrackRequest.execute();
-        return new Music(track.getAlbum().getName(), track.getHref(), track.getId(), track.getName());
+        return new Music(track.getAlbum().getName(), track.getHref(), track.getId(), track.getName(), Arrays.stream(track.getAlbum().getImages()).findFirst().get().getUrl());
 
     }
 
