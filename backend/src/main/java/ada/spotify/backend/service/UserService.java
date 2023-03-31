@@ -3,9 +3,11 @@ package ada.spotify.backend.service;
 import ada.spotify.backend.model.playlist.Playlist;
 import ada.spotify.backend.model.user.User;
 import ada.spotify.backend.repository.UserRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class UserService {
 
     private final UserRepository userRepository;
