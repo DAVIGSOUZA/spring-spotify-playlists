@@ -1,8 +1,14 @@
-<h1 align="left">Playlist Manager</h1>
+<div align="center">
+  <img height="200" src="https://www.protocol.com/media-library/spotify-app-with-headphones-on.png?id=29171621&width=1245&height=700&quality=85&coordinates=0%2C0%2C0%2C0"  />
+</div>
 
 ###
 
-<p align="left">Aplicativo para gerenciamento de músicas e playlists.</p>
+<h1 align="center">Playlist Manager</h1>
+
+###
+
+<p align="center">Aplicativo para gerenciamento de músicas e playlists.</p>
 
 ###
 
@@ -25,21 +31,18 @@
 
 ###
 
-<p align="left"></p>
+<h2 align="left">Material de referência utilizado</h2>
 
 ###
 
+<p align="left">https://github.com/spotify-web-api-java<br>https://developer.spotify.com/dashboard/login<br>https://developer.spotify.com/documentation/general/guides/working-with-playlists/<br>https://developer.spotify.com/documentation/web-api/</p>
 
+###
 
+<h2 align="left">Grupo responsável</h2>
 
+###
 
+<p align="left">https://github.com/renatainacio<br>https://github.com/tatymota<br>https://github.com/DAVIGSOUZA<br>https://github.com/rcarvalho-pb</p>
 
-### material de referência
-
-https://bret-gibson.medium.com/spotify-api-authentication-with-spring-boot-and-react-23a68f4e79bb
-
-https://developer.spotify.com/dashboard/login
-
-https://developer.spotify.com/documentation/general/guides/working-with-playlists/
-
-https://developer.spotify.com/documentation/web-api/
+###
