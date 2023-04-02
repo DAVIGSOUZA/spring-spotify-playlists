@@ -160,8 +160,7 @@ public class SpotifyController {
         PlaylistTrack[] playlistTracks = playlistsItems.getItems();
         List<String> musicsid = Arrays.asList(playlistTracks).stream()
                 .map(t -> t.getTrack().getId()).toList();
-        Playlist playlist = new Playlist("Descobertas da Semana");
-        playlist.setIdUser(Session.user.getId());
+        Playlist playlist = getPlaylist("Descobertas da Semana");
         playlistService.save(playlist);
         for (String id: musicsid) {
                 if (musicService.findById(id) == null)
@@ -191,8 +190,7 @@ public class SpotifyController {
             Track[] topTracks = trackPaging.getItems();
             List<String> musicsid = Arrays.asList(topTracks).stream()
                     .map(Track::getId).toList();
-            Playlist playlist = new Playlist("Top 50");
-            playlist.setIdUser(Session.user.getId());
+            Playlist playlist = getPlaylist("Top 50");
             playlistService.save(playlist);
             for (String id: musicsid) {
                 if (musicService.findById(id) == null)
@@ -229,9 +227,7 @@ public class SpotifyController {
     @PostMapping("/add")
     public String addNewPlaylist(@RequestParam("name") String name)
     {
-        Playlist playlist = new Playlist();
-        playlist.setName(name);
-        playlist.setIdUser(Session.user.getId());
+        Playlist playlist = getPlaylist(name);
         playlistService.save(playlist);
         return "redirect:playlists";
     }
@@ -264,7 +260,7 @@ public class SpotifyController {
         PlaylistSimplified[] spotifyPlaylists = Session.spotifyApi.getListOfCurrentUsersPlaylists().build().execute().getItems();
 
         for (PlaylistSimplified spotifyPlaylist : spotifyPlaylists) {
-            Playlist p = new Playlist(spotifyPlaylist.getName(), Session.user.getId());
+            Playlist p = getPlaylist(spotifyPlaylist.getName());
             playlistService.save(p);
             final Paging<PlaylistTrack> playlistsItems = spotifyApi.getPlaylistsItems(spotifyPlaylist.getId()).build().execute();
             PlaylistTrack[] playlistTracks = playlistsItems.getItems();
@@ -293,6 +289,12 @@ public class SpotifyController {
         return "playlists";
     }
 
+    protected Playlist getPlaylist(String playlistName) {
+        return playlistService.findAll().stream()
+                .filter(playlist -> playlistName.equals(playlist.getName()) && playlist.getIdUser().equals(Session.user.getId()))
+                .findFirst()
+                .orElse(new Playlist(playlistName, Session.user.getId()));
+    }
     
 
 }
