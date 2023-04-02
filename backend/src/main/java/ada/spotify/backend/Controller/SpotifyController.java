@@ -302,6 +302,13 @@ public class SpotifyController {
         return "playlists";
     }
 
+    protected Playlist getPlaylist(String playlistName) {
+        return playlistService.findAll().stream()
+                .filter(playlist -> playlistName.equals(playlist.getName()))
+                .findFirst()
+                .orElse(new Playlist(playlistName));
+    }
+
     
 
 }
