@@ -262,6 +262,15 @@ public class SpotifyController {
     public String findAllPlaylist() throws IOException, ParseException, SpotifyWebApiException {
 
         PlaylistSimplified[] spotifyPlaylists = Session.spotifyApi.getListOfCurrentUsersPlaylists().build().execute().getItems();
+//        List<PlaylistSimplified> simplifiedList = Arrays.asList(Session.spotifyApi.getListOfCurrentUsersPlaylists().build().execute().getItems());
+//        List<Playlist> playlists = simplifiedList.stream()
+//                .map(sptPlaylist -> {
+//                    return playlistService.save(new Playlist(sptPlaylist.getName(), Session.user.getId()));
+//                }).toList();
+//        simplifiedList.stream()
+//                .flatMap(simpList -> {
+//
+//                });
 
         for (PlaylistSimplified spotifyPlaylist : spotifyPlaylists) {
             Playlist p = new Playlist(spotifyPlaylist.getName(), Session.user.getId());
